@@ -1,0 +1,12 @@
+﻿<Window x:Class="WpfApplication2.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Game of Life" Height="350" Width="525" MinWidth="300" MinHeight="300">
+    <Grid >
+        <UniformGrid Name="uniform_grid" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Margin="0,0,-10,31" MinWidth="50" MinHeight="50"  />
+        <Label Name="Value_label" Content="{Binding ElementName=Valueslider,Path=Value,Mode=TwoWay}" HorizontalAlignment="Left" VerticalAlignment="Bottom" RenderTransformOrigin="0.547,0.544" Height="29" Width="44" Margin="220,0,0,2" />
+        <Slider   Name="Valueslider"  Margin="250,0,0,8" VerticalAlignment="Bottom" Maximum="50" Minimum="2" SmallChange="1" IsSnapToTickEnabled="True" ValueChanged="Valueslider_ValueChanged"/>
+        <CheckBox Content="Class version"  Name="class_version"  Margin="125,0,297,8" VerticalAlignment="Bottom" Height="18" IsChecked="True"  Click="class_version_Click" Checked="class_version_Checked" Unchecked="class_version_Unchecked"/>
+        <CheckBox Content="Is game running" Name="is_game_running"  Margin="2,0,401,8" VerticalAlignment="Bottom"  Height="18" Checked="is_game_running_Checked" Unchecked="is_game_running_Unchecked"/>
+    </Grid>
+</Window>
