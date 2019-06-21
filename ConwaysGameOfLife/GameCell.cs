@@ -12,7 +12,12 @@ namespace ConwaysGameOfLife
 
 		public static readonly Color Alive = Colors.Blue;
 
-		public Color Color { get; private set; }
+		private Color _newColor;
+
+		/// <summary>
+		/// Gets the cell state.
+		/// </summary>
+		public Color State { get; private set; }
 
 		/// <summary>
 		/// Gets the column index.
@@ -24,29 +29,45 @@ namespace ConwaysGameOfLife
 		/// </summary>
 		public int Row { get; }
 
-		public Color NewColor { get; set; }
-
-		public GameCell(int row, int column, Color color)
+		public GameCell(int row, int column, Color state)
 		{
 			Column = column;
 			Row = row;
-			Color = color;
+			State = state;
 		}
 
 		/// <summary>
-		/// Changes the color of the control to the opposite value.
+		/// Changes the state of the control to the opposite value.
 		/// </summary>
-		public void ChangeColor()
+		public void ChangeState()
 		{
-			Color = Color == Dead ? Alive : Dead;
+			State = State == Dead ? Alive : Dead;
 		}
 
 		/// <summary>
-		/// Changes the color of the control to the new color.
+		/// Calculates whether this cell will survive to the next generation.
 		/// </summary>
-		public void ApplyNewColor()
+		public void DetermineCellSurvival(int aliveNeighbors)
 		{
-			Color = NewColor;
+			if (State == Dead)
+			{
+				_newColor = aliveNeighbors == 3 ? Alive : Dead;
+			}
+			else
+			{
+				if (aliveNeighbors < 2 || aliveNeighbors > 3)
+					_newColor = Dead;
+				else
+					_newColor = Alive;
+			}
+		}
+
+		/// <summary>
+		/// Moves the cell to the next generation.
+		/// </summary>
+		public void NextGeneration()
+		{
+			State = _newColor;
 		}
 	}
 }
