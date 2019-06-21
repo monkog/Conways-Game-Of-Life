@@ -35,6 +35,6 @@
 		<CheckBox Grid.Column="0" Grid.Row="1" Content="Class version"  Name="ClassVersion" IsChecked="True"/>
 		<CheckBox Grid.Column="1" Grid.Row="1" Content="Is game running" Name="IsGameRunning" Checked="IsGameRunningChecked" Unchecked="IsGameRunningUnchecked" Visibility="{Binding ElementName=ClassVersion, Path=IsChecked, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
 		<Label Grid.Column="2" Grid.Row="1" Name="ValueLabel" Content="{Binding ElementName=ValueSlider, Path=Value, Mode=TwoWay}"/>
-		<Slider Grid.Column="3" Grid.Row="1" Name="ValueSlider" VerticalAlignment="Bottom" Maximum="50" Minimum="2" SmallChange="1" IsSnapToTickEnabled="True" ValueChanged="ValueSlider_ValueChanged"/>
+		<Slider Grid.Column="3" Grid.Row="1" Name="ValueSlider" VerticalAlignment="Bottom" Maximum="50" Minimum="2" SmallChange="1" IsSnapToTickEnabled="True" ValueChanged="GameSizeChanged"/>
 	</Grid>
 </Window>
