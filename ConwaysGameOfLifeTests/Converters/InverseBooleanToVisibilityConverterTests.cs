@@ -16,7 +16,7 @@ namespace ConwaysGameOfLifeTests.Converters
 			_unitUnderTest = new InverseBooleanToVisibilityConverter();
 		}
 
-		[TestMethod]
+		[DataTestMethod]
 		[DataRow(true, Visibility.Collapsed)]
 		[DataRow(false, Visibility.Visible)]
 		[DataRow(null, Visibility.Collapsed)]

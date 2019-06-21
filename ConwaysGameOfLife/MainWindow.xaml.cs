@@ -30,10 +30,8 @@ namespace ConwaysGameOfLife
 				{
 					var rect = _rectangleTab[i, j];
 					var rt = (GameCell)rect.Tag;
-					rt.Color = rt.NewColor;
-
-					var brush = rt.Color == 1 ? new SolidColorBrush(Colors.Blue) : new SolidColorBrush(SystemColors.ControlColor);
-					rect.Fill = brush;
+					rt.ApplyNewColor();
+					rect.Fill = new SolidColorBrush(rt.Color);
 				}
 		}
 
@@ -50,60 +48,60 @@ namespace ConwaysGameOfLife
 					if (i + 1 < _rectangleTab.GetLength(0))
 					{
 						var tmp = (GameCell)_rectangleTab[i + 1, j].Tag;
-						if (tmp.Color == 1) dziki_dzik++;
+						if (tmp.Color == GameCell.Alive) dziki_dzik++;
 					}
 
 					if (i + 1 < _rectangleTab.GetLength(0) && j + 1 < _rectangleTab.GetLength(0))
 					{
 						var tmp = (GameCell)_rectangleTab[i + 1, j + 1].Tag;
-						if (tmp.Color == 1) dziki_dzik++;
+						if (tmp.Color == GameCell.Alive) dziki_dzik++;
 					}
 
 					if (j + 1 < _rectangleTab.GetLength(0))
 					{
 						var tmp = (GameCell)_rectangleTab[i, j + 1].Tag;
-						if (tmp.Color == 1) dziki_dzik++;
+						if (tmp.Color == GameCell.Alive) dziki_dzik++;
 					}
 
 					if (i - 1 >= 0 && j + 1 < _rectangleTab.GetLength(0))
 					{
 						var tmp = (GameCell)_rectangleTab[i - 1, j + 1].Tag;
-						if (tmp.Color == 1) dziki_dzik++;
+						if (tmp.Color == GameCell.Alive) dziki_dzik++;
 					}
 
 					if (i - 1 >= 0)
 					{
 						var tmp = (GameCell)_rectangleTab[i - 1, j].Tag;
-						if (tmp.Color == 1) dziki_dzik++;
+						if (tmp.Color == GameCell.Alive) dziki_dzik++;
 					}
 
 					if (j - 1 >= 0 && i - 1 >= 0)
 					{
 						var tmp = (GameCell)_rectangleTab[i - 1, j - 1].Tag;
-						if (tmp.Color == 1) dziki_dzik++;
+						if (tmp.Color == GameCell.Alive) dziki_dzik++;
 					}
 
 					if (j - 1 >= 0)
 					{
 						var tmp = (GameCell)_rectangleTab[i, j - 1].Tag;
-						if (tmp.Color == 1) dziki_dzik++;
+						if (tmp.Color == GameCell.Alive) dziki_dzik++;
 					}
 
 					if (i + 1 < _rectangleTab.GetLength(0) && j - 1 >= 0)
 					{
 						var tmp = (GameCell)_rectangleTab[i + 1, j - 1].Tag;
-						if (tmp.Color == 1) dziki_dzik++;
+						if (tmp.Color == GameCell.Alive) dziki_dzik++;
 					}
-					if (rt.Color == 0)
+					if (rt.Color == GameCell.Dead)
 					{
-						rt.NewColor = dziki_dzik == 3 ? 1 : 0;
+						rt.NewColor = dziki_dzik == 3 ? GameCell.Alive : GameCell.Dead;
 					}
 					else
 					{
 						if (dziki_dzik < 2 || dziki_dzik > 3)
-							rt.NewColor = 0;
+							rt.NewColor = GameCell.Dead;
 						else
-							rt.NewColor = 1;
+							rt.NewColor = GameCell.Alive;
 
 					}
 				}
@@ -111,23 +109,23 @@ namespace ConwaysGameOfLife
 
 		}
 
-		private void Draw(int howMany)
+		private void InitializeGame(int cellNumber)
 		{
 			UniformGrid.Children.Clear();
-			UniformGrid.Columns = howMany;
-			UniformGrid.Rows = howMany;
+			UniformGrid.Columns = cellNumber;
+			UniformGrid.Rows = cellNumber;
 
-			_rectangleTab = new Rectangle[howMany, howMany];
+			_rectangleTab = new Rectangle[cellNumber, cellNumber];
 
-			for (var i = 0; i < howMany; i++)
-				for (var j = 0; j < howMany; j++)
+			for (var i = 0; i < cellNumber; i++)
+				for (var j = 0; j < cellNumber; j++)
 				{
 					var brush = new SolidColorBrush(SystemColors.ControlColor);
 					var rect = new Rectangle()
 					{
 						Fill = brush,
 						Margin = new Thickness(1, 1, 1, 1),
-						Tag = new GameCell(i, j) { Color = 0, NewColor = 0 }
+						Tag = new GameCell(i, j, GameCell.Dead) { NewColor = GameCell.Dead }
 					};
 					_rectangleTab[i, j] = rect;
 					rect.MouseDown += RectMouseDown;
@@ -138,18 +136,16 @@ namespace ConwaysGameOfLife
 
 		private static void RectMouseDown(object sender, MouseButtonEventArgs e)
 		{
-			var rect = sender as Rectangle;
-			var rt = (GameCell)rect.Tag;
-			var brush = rt.Color == 1 ? new SolidColorBrush(SystemColors.ControlColor) : new SolidColorBrush(Colors.Blue);
-			rt.Color = (rt.Color + 1) % 2;
-			rect.Fill = brush;
-
+			var cell = sender as Rectangle;
+			var gameCell = (GameCell)cell.Tag;
+			gameCell.ChangeColor();
+			cell.Fill = new SolidColorBrush(gameCell.Color);
 		}
 
 		private void GameSizeChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			var howMany = (int)ValueSlider.Value;
-			Draw(howMany);
+			var cellNumber = (int)ValueSlider.Value;
+			InitializeGame(cellNumber);
 		}
 
 		private void IsGameRunningChecked(object sender, RoutedEventArgs e)
