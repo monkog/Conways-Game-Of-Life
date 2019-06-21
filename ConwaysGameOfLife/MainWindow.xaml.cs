@@ -12,7 +12,10 @@ namespace ConwaysGameOfLife
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		private Rectangle[,] _rectangleTab;
+		private int _boardSize;
+
+		private GameCell[,] _gameBoard;
+
 		private readonly DispatcherTimer _timer = new DispatcherTimer();
 
 		public MainWindow()
@@ -24,81 +27,83 @@ namespace ConwaysGameOfLife
 
 		private void TimerTick(object sender, EventArgs e)
 		{
-			Check();
-			for (var i = 0; i < _rectangleTab.GetLength(0); i++)
-				for (var j = 0; j < _rectangleTab.GetLength(0); j++)
+			CalculateNextGeneration();
+
+			for (var i = 0; i < _boardSize; i++)
+				for (var j = 0; j < _boardSize; j++)
 				{
-					var rect = _rectangleTab[i, j];
-					var rt = (GameCell)rect.Tag;
-					rt.ApplyNewColor();
-					rect.Fill = new SolidColorBrush(rt.Color);
+					var cell = _gameBoard[i, j];
+					cell.ApplyNewColor();
+					var gridCell = (Rectangle) UniformGrid.Children[cell.Row * _boardSize + cell.Column];
+					gridCell.Fill = new SolidColorBrush(cell.Color);
 				}
 		}
 
-		private void Check()
+		private void CalculateNextGeneration()
 		{
-			for (var i = 0; i < _rectangleTab.GetLength(0); i++)
+			for (var i = 0; i < _boardSize; i++)
 			{
-				for (var j = 0; j < _rectangleTab.GetLength(0); j++)
+				for (var j = 0; j < _boardSize; j++)
 				{
-					var rt = (GameCell)_rectangleTab[i, j].Tag;
+					var rt = _gameBoard[i, j];
 
-					var dziki_dzik = 0;
+					var aliveNeighbors = 0;
 
-					if (i + 1 < _rectangleTab.GetLength(0))
+					if (i + 1 < _boardSize)
 					{
-						var tmp = (GameCell)_rectangleTab[i + 1, j].Tag;
-						if (tmp.Color == GameCell.Alive) dziki_dzik++;
+						var neighbor = _gameBoard[i + 1, j];
+						if (neighbor.Color == GameCell.Alive) aliveNeighbors++;
 					}
 
-					if (i + 1 < _rectangleTab.GetLength(0) && j + 1 < _rectangleTab.GetLength(0))
+					if (i + 1 < _boardSize && j + 1 < _boardSize)
 					{
-						var tmp = (GameCell)_rectangleTab[i + 1, j + 1].Tag;
-						if (tmp.Color == GameCell.Alive) dziki_dzik++;
+						var neighbor = _gameBoard[i + 1, j + 1];
+						if (neighbor.Color == GameCell.Alive) aliveNeighbors++;
 					}
 
-					if (j + 1 < _rectangleTab.GetLength(0))
+					if (j + 1 < _boardSize)
 					{
-						var tmp = (GameCell)_rectangleTab[i, j + 1].Tag;
-						if (tmp.Color == GameCell.Alive) dziki_dzik++;
+						var neighbor = _gameBoard[i, j + 1];
+						if (neighbor.Color == GameCell.Alive) aliveNeighbors++;
 					}
 
-					if (i - 1 >= 0 && j + 1 < _rectangleTab.GetLength(0))
+					if (i - 1 >= 0 && j + 1 < _boardSize)
 					{
-						var tmp = (GameCell)_rectangleTab[i - 1, j + 1].Tag;
-						if (tmp.Color == GameCell.Alive) dziki_dzik++;
+						var neighbor = _gameBoard[i - 1, j + 1];
+						if (neighbor.Color == GameCell.Alive) aliveNeighbors++;
 					}
 
 					if (i - 1 >= 0)
 					{
-						var tmp = (GameCell)_rectangleTab[i - 1, j].Tag;
-						if (tmp.Color == GameCell.Alive) dziki_dzik++;
+						var neighbor = _gameBoard[i - 1, j];
+						if (neighbor.Color == GameCell.Alive) aliveNeighbors++;
 					}
 
 					if (j - 1 >= 0 && i - 1 >= 0)
 					{
-						var tmp = (GameCell)_rectangleTab[i - 1, j - 1].Tag;
-						if (tmp.Color == GameCell.Alive) dziki_dzik++;
+						var neighbor = _gameBoard[i - 1, j - 1];
+						if (neighbor.Color == GameCell.Alive) aliveNeighbors++;
 					}
 
 					if (j - 1 >= 0)
 					{
-						var tmp = (GameCell)_rectangleTab[i, j - 1].Tag;
-						if (tmp.Color == GameCell.Alive) dziki_dzik++;
+						var neighbor = _gameBoard[i, j - 1];
+						if (neighbor.Color == GameCell.Alive) aliveNeighbors++;
 					}
 
-					if (i + 1 < _rectangleTab.GetLength(0) && j - 1 >= 0)
+					if (i + 1 < _boardSize && j - 1 >= 0)
 					{
-						var tmp = (GameCell)_rectangleTab[i + 1, j - 1].Tag;
-						if (tmp.Color == GameCell.Alive) dziki_dzik++;
+						var neighbor = _gameBoard[i + 1, j - 1];
+						if (neighbor.Color == GameCell.Alive) aliveNeighbors++;
 					}
+
 					if (rt.Color == GameCell.Dead)
 					{
-						rt.NewColor = dziki_dzik == 3 ? GameCell.Alive : GameCell.Dead;
+						rt.NewColor = aliveNeighbors == 3 ? GameCell.Alive : GameCell.Dead;
 					}
 					else
 					{
-						if (dziki_dzik < 2 || dziki_dzik > 3)
+						if (aliveNeighbors < 2 || aliveNeighbors > 3)
 							rt.NewColor = GameCell.Dead;
 						else
 							rt.NewColor = GameCell.Alive;
@@ -115,19 +120,20 @@ namespace ConwaysGameOfLife
 			UniformGrid.Columns = cellNumber;
 			UniformGrid.Rows = cellNumber;
 
-			_rectangleTab = new Rectangle[cellNumber, cellNumber];
+			_gameBoard = new GameCell[cellNumber, cellNumber];
+			var brush = new SolidColorBrush(GameCell.Dead);
 
 			for (var i = 0; i < cellNumber; i++)
 				for (var j = 0; j < cellNumber; j++)
 				{
-					var brush = new SolidColorBrush(SystemColors.ControlColor);
 					var rect = new Rectangle()
 					{
 						Fill = brush,
-						Margin = new Thickness(1, 1, 1, 1),
+						Margin = new Thickness(1),
 						Tag = new GameCell(i, j, GameCell.Dead) { NewColor = GameCell.Dead }
 					};
-					_rectangleTab[i, j] = rect;
+
+					_gameBoard[i, j] = (GameCell) rect.Tag;
 					rect.MouseDown += RectMouseDown;
 					UniformGrid.Children.Add(rect);
 				}
@@ -144,8 +150,8 @@ namespace ConwaysGameOfLife
 
 		private void GameSizeChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			var cellNumber = (int)ValueSlider.Value;
-			InitializeGame(cellNumber);
+			_boardSize = (int)ValueSlider.Value;
+			InitializeGame(_boardSize);
 		}
 
 		private void IsGameRunningChecked(object sender, RoutedEventArgs e)
