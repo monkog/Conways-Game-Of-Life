@@ -12,7 +12,7 @@ namespace ConwaysGameOfLife.Converters
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			var booleanValue = value != null && (bool)value;
+			var booleanValue = value == null || (bool)value;
 
 			return booleanValue ? Visibility.Collapsed : Visibility.Visible;
 		}
