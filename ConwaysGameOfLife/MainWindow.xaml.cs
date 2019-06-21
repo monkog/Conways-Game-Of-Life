@@ -22,7 +22,7 @@ namespace ConwaysGameOfLife
 		{
 			InitializeComponent();
 			_timer.Tick += TimerTick;
-			_timer.Interval = new TimeSpan(0, 0, 0, 0, 80);
+			_timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
 		}
 
 		private void TimerTick(object sender, EventArgs e)
