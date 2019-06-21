@@ -20,7 +20,6 @@ namespace ConwaysGameOfLife
             InitializeComponent();
             _timer.Tick += TimerTick;
             _timer.Interval = new TimeSpan(0, 0, 0, 0, 80);
-            IsGameRunning.Visibility = Visibility.Hidden;
         }
 
         private void TimerTick(object sender, EventArgs e)
@@ -161,11 +160,6 @@ namespace ConwaysGameOfLife
             public int NewColor { get; set; }
         }
 
-        private void ClassVersionClick(object sender, RoutedEventArgs e)
-        {
-	        IsGameRunning.Visibility = ClassVersion.IsChecked == true ? Visibility.Hidden : Visibility.Visible;
-        }
-
         private void IsGameRunningChecked(object sender, RoutedEventArgs e)
         {
             _timer.Start();
@@ -174,21 +168,6 @@ namespace ConwaysGameOfLife
         private void IsGameRunningUnchecked(object sender, RoutedEventArgs e)
         {
             _timer.Stop();
-        }
-
-        private void ClassVersionChecked(object sender, RoutedEventArgs e)
-        {
-            ClassVersion.Margin = new Thickness(2, 0, 401, 8);
-            ValueSlider.Margin = new Thickness(125, 0, 0, 8);
-            ValueLabel.Margin = new Thickness(100, 0, 0, 2);
-        }
-
-        private void ClassVersionUnchecked(object sender, RoutedEventArgs e)
-        {
-            ClassVersion.Margin = new Thickness(125, 0, 297, 8);
-            IsGameRunning.Margin = new Thickness(2, 0, 401, 8);
-            ValueSlider.Margin = new Thickness(250, 0, 0, 8);
-            ValueLabel.Margin = new Thickness(220, 0, 0, 2);
         }
     }
 }
