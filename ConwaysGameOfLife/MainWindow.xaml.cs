@@ -34,7 +34,7 @@ namespace ConwaysGameOfLife
 				{
 					var cell = _gameBoard[i, j];
 					cell.NextGeneration();
-					var gridCell = (Rectangle) UniformGrid.Children[cell.Row * _boardSize + cell.Column];
+					var gridCell = (Rectangle)UniformGrid.Children[cell.Row * _boardSize + cell.Column];
 					gridCell.Fill = new SolidColorBrush(cell.State);
 				}
 		}
@@ -48,52 +48,23 @@ namespace ConwaysGameOfLife
 					var gameCell = _gameBoard[i, j];
 					var aliveNeighbors = 0;
 
-					if (i + 1 < _boardSize)
+					var neighbors = new[]
 					{
-						var neighbor = _gameBoard[i + 1, j];
-						if (neighbor.State == GameCell.Alive) aliveNeighbors++;
-					}
+						new Point(i + 1, j),
+						new Point(i + 1, j + 1),
+						new Point(i, j + 1),
+						new Point(i - 1, j + 1),
+						new Point(i - 1, j),
+						new Point(i - 1, j - 1),
+						new Point(i, j - 1),
+						new Point(i + 1, j - 1),
+					};
 
-					if (i + 1 < _boardSize && j + 1 < _boardSize)
+					foreach (var neighbor in neighbors)
 					{
-						var neighbor = _gameBoard[i + 1, j + 1];
-						if (neighbor.State == GameCell.Alive) aliveNeighbors++;
-					}
-
-					if (j + 1 < _boardSize)
-					{
-						var neighbor = _gameBoard[i, j + 1];
-						if (neighbor.State == GameCell.Alive) aliveNeighbors++;
-					}
-
-					if (i - 1 >= 0 && j + 1 < _boardSize)
-					{
-						var neighbor = _gameBoard[i - 1, j + 1];
-						if (neighbor.State == GameCell.Alive) aliveNeighbors++;
-					}
-
-					if (i - 1 >= 0)
-					{
-						var neighbor = _gameBoard[i - 1, j];
-						if (neighbor.State == GameCell.Alive) aliveNeighbors++;
-					}
-
-					if (j - 1 >= 0 && i - 1 >= 0)
-					{
-						var neighbor = _gameBoard[i - 1, j - 1];
-						if (neighbor.State == GameCell.Alive) aliveNeighbors++;
-					}
-
-					if (j - 1 >= 0)
-					{
-						var neighbor = _gameBoard[i, j - 1];
-						if (neighbor.State == GameCell.Alive) aliveNeighbors++;
-					}
-
-					if (i + 1 < _boardSize && j - 1 >= 0)
-					{
-						var neighbor = _gameBoard[i + 1, j - 1];
-						if (neighbor.State == GameCell.Alive) aliveNeighbors++;
+						if (neighbor.X < 0 || neighbor.X >= _boardSize || neighbor.Y < 0 || neighbor.Y >= _boardSize) continue;
+						var neighborCell = _gameBoard[(int)neighbor.X, (int)neighbor.Y];
+						if (neighborCell.State == GameCell.Alive) aliveNeighbors++;
 					}
 
 					gameCell.DetermineCellSurvival(aliveNeighbors);
@@ -121,7 +92,7 @@ namespace ConwaysGameOfLife
 						Tag = new GameCell(i, j, GameCell.Dead)
 					};
 
-					_gameBoard[i, j] = (GameCell) rect.Tag;
+					_gameBoard[i, j] = (GameCell)rect.Tag;
 					rect.MouseDown += RectMouseDown;
 					UniformGrid.Children.Add(rect);
 				}
@@ -132,7 +103,7 @@ namespace ConwaysGameOfLife
 		{
 			var cell = sender as Rectangle;
 			var gameCell = (GameCell)cell.Tag;
-			gameCell.ChangeColor();
+			gameCell.ChangeState();
 			cell.Fill = new SolidColorBrush(gameCell.State);
 		}
 
